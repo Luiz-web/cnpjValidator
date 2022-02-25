@@ -1,5 +1,6 @@
-print('Digite um cnpj para saber se é matemáticamente válido ou não')
-cnpj = input('CNPJ:  ')
+import random
+import re
+cnpj = ''
 
 def remover_caracteres(cnpj):
     cnpj = cnpj.replace('/', '')
@@ -7,8 +8,6 @@ def remover_caracteres(cnpj):
     cnpj = cnpj.replace('.', '')
     return cnpj
     
-cnpj_sem_caracteres = remover_caracteres(cnpj)
-cnpj_puro = cnpj_sem_caracteres[:12]
 lista_resultado = []
 
 def encontrando_digito(cnpj_puro):
@@ -43,32 +42,37 @@ def encontrando_seg_digito(cnpj_1dig):
     lista_resultado.clear()
     return novocnpj
 
-def verificando_sequencias(cnpj_sem_caracteres):
-    sequencia = cnpj_sem_caracteres[0] * len(cnpj_sem_caracteres)
-
-    if sequencia == cnpj_sem_caracteres:
-        return True
-    else:
-        return None
-
-def validando():
+def validando(cnpj):
     try:
+        cnpj_sem_caracteres = remover_caracteres(cnpj)
+        cnpj_puro = cnpj_sem_caracteres[:12]   
+        
         cnpj_1dig = encontrando_digito(cnpj_puro)
         novocnpj = encontrando_seg_digito(cnpj_1dig)
-    except ValueError:
-        return False
-    
-    if verificando_sequencias(cnpj_sem_caracteres) == True:
-         print('CNPJ inválido. Uma sequência de números foi digitada!')
-    elif novocnpj == cnpj_sem_caracteres:
-         print(f'{cnpj} é válido')
+    except ValueError as e:
+        return 'Formato de CNPJ inválido'
+   
+    if novocnpj == cnpj_sem_caracteres:
+         return f'{cnpj } é Válido'
     else:
-         print(f'{cnpj} é inválido')
+         return f'{cnpj} é inválido'
     
-validar = validando()
+def gera():
+    primeiro_digito = random.randint(0, 9)
+    segundo_digito = random.randint(0, 9)
+    segundo_bloco = random.randint(100, 999)
+    terceiro_bloco = random.randint(100, 999)
+    quarto_bloco = '0001'
 
-if validar == False:
-    print('Formato de dados inválidos para um CNPJ!')
+    cnpj_random = f'{primeiro_digito}{segundo_digito}{segundo_bloco}' \
+        f'{terceiro_bloco}{quarto_bloco}'
+    
+    primeiro_calculo = encontrando_digito(cnpj_random)
+    novocnpj_aleatorio = encontrando_seg_digito(primeiro_calculo)
 
+    return novocnpj_aleatorio
 
-
+def formata():
+    novocnpj_aleatorio = gera()
+    formatado = f'{novocnpj_aleatorio[:2]}.{novocnpj_aleatorio[2:5]}.{novocnpj_aleatorio[5:8]}/{novocnpj_aleatorio[8:12]}-{novocnpj_aleatorio[12:14]}'
+    return formatado
